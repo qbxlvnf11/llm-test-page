@@ -1,0 +1,8 @@
+
+fastapi
+uvicorn[standard]
+requests
+pydantic-settings
+google-generativeai
+google-auth
+jinja2
