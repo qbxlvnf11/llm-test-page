@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gemini API Test</title>
+  <title>LLM Test</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <link rel="stylesheet" href="/static/css/style.css">
@@ -12,8 +12,8 @@
 <body class="bg-gray-100 flex items-center justify-center min-h-screen font-sans py-12">
   <div class="w-full max-w-3xl bg-white rounded-lg shadow-2xl p-8 space-y-6">
     <header class="text-center border-b pb-4">
-      <h1 class="text-4xl font-bold text-gray-800">Gemini API Test</h1>
-      <p class="text-gray-500 mt-2">Test the Gemini model through the backend server.</p>
+      <h1 class="text-4xl font-bold text-gray-800">LLM Test</h1>
+      <p class="text-gray-500 mt-2">Test the LLM model through the backend server.</p>
     </header>
 
     <main class="space-y-6">
@@ -81,6 +81,7 @@
         <div class="flex justify-between items-center border-b pb-2 mb-2">
           <h2 class="text-lg font-semibold text-gray-800">AI 응답</h2>
           <div id="usage-info" class="flex items-center space-x-4 text-xs text-gray-500 hidden">
+            <span>Time: <strong id="inference-time" class="font-mono">-</strong>s</span>
             <span>Input: <strong id="input-tokens" class="font-mono">0</strong> tokens</span>
             <span>Output: <strong id="output-tokens" class="font-mono">0</strong> tokens</span>
             <span>Cost: <strong id="estimated-cost" class="font-mono">$0.000000</strong></span>

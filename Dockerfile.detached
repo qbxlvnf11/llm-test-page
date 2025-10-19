@@ -24,4 +24,5 @@ COPY . .
 EXPOSE ${PORT}
 
 # 8. 컨테이너 실행 시 수행할 명령어
+## uvicorn server:app --host localhost --port 8001
 CMD ["/bin/sh", "-c", "uvicorn server:app --host $HOST --port $PORT"]

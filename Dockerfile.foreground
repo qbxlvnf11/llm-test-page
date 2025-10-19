@@ -1,0 +1,28 @@
+# 1. 베이스 이미지 설정
+FROM python:3.9-slim
+
+# # 2. 빌드 시점에 IP와 포트를 인자(ARG)로 받기 (기본값 설정)
+# ARG SERVER_IP="0.0.0.0"
+# ARG SERVER_PORT=8000
+
+# # 3. ARG를 런타임 환경 변수(ENV)로 설정
+# #    (컨테이너 내부의 파이썬 스크립트가 os.getenv()로 읽을 수 있게 됨)
+# ENV HOST=${SERVER_IP}
+# ENV PORT=${SERVER_PORT}
+
+# 4. 작업 디렉토리 설정
+WORKDIR /app
+
+# 5. 의존성 파일 복사 및 설치
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 6. 소스 코드 복사
+# COPY . .
+
+# 7. 컨테이너가 외부에 노출할 포트 명시 (문서화 목적)
+# EXPOSE ${PORT}
+
+# 8. 컨테이너 실행 시 수행할 명령어
+## uvicorn server:app --host localhost --port 8001
+# CMD ["/bin/sh", "-c", "uvicorn server:app --host $HOST --port $PORT"]

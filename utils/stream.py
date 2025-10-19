@@ -1,9 +1,10 @@
 import json 
 import asyncio
+import time
 
 from utils.cost import calculate_cost
 
-async def stream_generator(response, model_name: str):
+async def stream_generator(response, model_name: str, start_time: float):
 
     try:
         for chunk in response:
@@ -15,6 +16,12 @@ async def stream_generator(response, model_name: str):
         # print(f"스트리밍 중 오류 발생: {e}")
         # yield f"\n\n오류: 스트리밍 중 문제가 발생했습니다: {e}"
 
+    end_time = time.perf_counter()
+    # inference_time_ms = (end_time - start_time) * 1000
+    inference_time_s = round((end_time - start_time), 4)
+    # print(f"Inference Time: {inference_time_ms:.4f} ms")
+    print(f"Inference Time: {inference_time_s:.4f} s")
+
     try:
         # Gemini API는 스트림이 끝나면 usage_metadata를 제공합니다.
         usage_metadata = response.usage_metadata
@@ -25,7 +32,8 @@ async def stream_generator(response, model_name: str):
         metadata = {
             "input_tokens": input_tokens,
             "output_tokens": output_tokens,
-            "cost": cost
+            "cost": cost,
+            "inference_time": round(inference_time_s, 4)
         }
         metadata_json_string = json.dumps(metadata)
         

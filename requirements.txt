@@ -6,3 +6,4 @@ pydantic-settings
 google-generativeai
 google-auth
 jinja2
+redis

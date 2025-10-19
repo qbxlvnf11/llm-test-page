@@ -3,12 +3,14 @@ from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import StreamingResponse
 
+import time
 from typing import List
 
-import google.generativeai as genai
+# import google.generativeai as genai
 from google.generativeai.types import generation_types
 
 from model import gemini_schemas
+from model.gemini_utils import get_model, generate
 from config.base import settings
 from utils.cost import calculate_cost
 from utils.stream import stream_generator
@@ -74,23 +76,26 @@ async def get_available_models():
 async def generate_gemini_response(request: gemini_schemas.GeminiTestQueryRequest):
     
     try:
-        model = genai.GenerativeModel(request.model_name)
 
-        generation_config = genai.types.GenerationConfig(
-            max_output_tokens=request.max_output_tokens,
-            top_k=request.top_k,
-            top_p=request.top_p,
-            temperature=request.temperature,
+        model_name = request.model_name
+        stream = request.stream
+
+        start_time = time.perf_counter()
+        model, generation_config = get_model(model_name, \
+            request.max_output_tokens, \
+            request.top_k, \
+            request.top_p, \
+            request.temperature
         )
+        end_time = time.perf_counter()
+        model_time_ms = (end_time - start_time) * 1000
+        print(f" Get Model Time: {model_time_ms:.4f} ms")
+
+        response, start_time = generate(model, generation_config, query=request.query, \
+            stream=stream)
 
         ## 스트림 요청인지 확인하여 분기
-        if request.stream:
-            ## 스트리밍 호출
-            response_stream = model.generate_content(
-                request.query,
-                generation_config=generation_config,
-                stream=True
-            )
+        if stream:
 
             # ## API로부터 받은 각 텍스트 조각을 즉시 yield로 반환
             # for chunk in response_stream:
@@ -104,17 +109,18 @@ async def generate_gemini_response(request: gemini_schemas.GeminiTestQueryReques
 
             ## StreamingResponse로 제너레이터 함수를 감싸서 반환
             return StreamingResponse(
-                stream_generator(response_stream, request.model_name), 
+                stream_generator(response, model_name, start_time), 
                 media_type="text/event-stream"
             )
 
         else: ## 기존 비스트리밍 로직
-            response = model.generate_content(
-                request.query,
-                generation_config=generation_config,
-                stream=False
-            )
             
+            end_time = time.perf_counter()
+            # inference_time_ms = (end_time - start_time) * 1000
+            inference_time_s = round((end_time - start_time), 4)
+            # print(f"Inference Time: {inference_time_ms:.4f} ms")
+            print(f"Inference Time: {inference_time_s:.4f} s")
+
             if not response.text:
                  raise HTTPException(status_code=400, detail="AI로부터 유효한 텍스트를 받지 못했습니다.")
 
@@ -126,7 +132,8 @@ async def generate_gemini_response(request: gemini_schemas.GeminiTestQueryReques
             metadata = {
                 "input_tokens": input_tokens,
                 "output_tokens": output_tokens,
-                "cost": cost
+                "cost": cost,
+                "inference_time": inference_time_s
             }
 
             return {

@@ -43,6 +43,7 @@ const usageInfo = document.getElementById('usage-info');
 const inputTokens = document.getElementById('input-tokens');
 const outputTokens = document.getElementById('output-tokens');
 const estimatedCost = document.getElementById('estimated-cost');
+const inferenceTime = document.getElementById('inference-time');
 
 window.onload = async () => {
   try {
@@ -107,6 +108,7 @@ function resetUsageInfo() {
   inputTokens.textContent = '0';
   outputTokens.textContent = '0';
   estimatedCost.textContent = '$0.000000';
+  inferenceTime.textContent = '0ms';
 }
 
 function updateUsageInfo(metadata) {
@@ -114,6 +116,7 @@ function updateUsageInfo(metadata) {
   inputTokens.textContent = metadata.input_tokens || 'N/A';
   outputTokens.textContent = metadata.output_tokens || 'N/A';
   estimatedCost.textContent = metadata.cost ? `$${metadata.cost.toFixed(6)}` : 'N/A';
+  inferenceTime.textContent = metadata.inference_time || 'N/A';
   usageInfo.classList.remove('hidden');
 }
 
