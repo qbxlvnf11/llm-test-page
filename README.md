@@ -114,7 +114,7 @@ docker build --build-arg SERVER_PORT={SERVER_PORT} -t api_server_env_detached -f
 
 ```
 # Region settings (Check if asia-south3 is supported by GCR; most use asia.gcr.io)
-gcloud config set compute/region asia-south3
+gcloud config set compute/region asia-southeast1
 # Docker authentication
 gcloud auth configure-docker
 # Image tagging and pushing
@@ -128,7 +128,7 @@ docker push asia.gcr.io/$GCP_PROJECT_ID/api_server_env_detached:latest
 gcloud run deploy api-server \
   --image asia.gcr.io/$GCP_PROJECT_ID/api_server_env_detached:latest \
   --platform managed \
-  --region asia-south1 \
+  --region asia-southeast1 \
   --allow-unauthenticated
 ```
 
@@ -137,7 +137,7 @@ gcloud run deploy api-server \
 * If you encounter permission issues such as "Error: Forbidden Your client does not have permission to get URL from this server," modify the iam.allowedPolicyMemberDomains organization policy.
 
 ```
-gcloud beta run services add-iam-policy-binding api-server --region=asia-south1 --member=allUsers --role=roles/run.invoker
+gcloud beta run services add-iam-policy-binding api-server --region=asia-southeast1 --member=allUsers --role=roles/run.invoker
 ```
 
 </details>
