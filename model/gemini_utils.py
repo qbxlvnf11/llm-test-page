@@ -11,7 +11,7 @@ def gemini_api_certification():
     # --- Gemini API 인증 및 초기화 ---
     try:
         credentials = service_account.Credentials.from_service_account_file(
-            settings.GOOGLE_APPLICATION_CREDENTIALS_PATH
+            settings.GOOGLE_APPLICATION_CREDENTIALS
         )
         genai.configure(credentials=credentials)
         print("✅ Gemini API has been initialized successfully.")

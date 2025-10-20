@@ -5,7 +5,7 @@ from google.oauth2 import service_account
 from config.base import settings
 
 credentials = service_account.Credentials.from_service_account_file(
-    settings.GOOGLE_APPLICATION_CREDENTIALS_PATH
+    settings.GOOGLE_APPLICATION_CREDENTIALS
 )
 
 # genai.configure(api_key=os.environ['GOOGLE_API_KEY'])

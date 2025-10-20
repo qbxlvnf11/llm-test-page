@@ -6,16 +6,22 @@ from pathlib import Path
 
 from .utils import load_models_from_file, load_pricing_from_file
 
-class Settings(BaseSettings):
+class DBSettings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",
         extra="ignore",
     )
 
-    # GEMINI_API_KEY: str
-    GOOGLE_APPLICATION_CREDENTIALS: str
-    GEMINI_MODELS: List[str] = Field(default_factory=load_models_from_file)
-    MODEL_PRICING: Dict[str, Dict[str, float]] = Field(default_factory=load_pricing_from_file)
+    CLOUD_SQL_INSTANCE: str
 
-settings = Settings()
+    DB_USER: str
+    DB_PASSWORD: str
+    DB_NAME: str
+
+    DB_API_DRIVER: str
+    DB_DRIVER: str
+
+    DB_PROMPT_TABLE: str
+
+db_settings = DBSettings()

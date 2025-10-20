@@ -9,7 +9,34 @@
 
     ```ini
     # .env
-    GOOGLE_APPLICATION_CREDENTIALS_PATH="/path/to/your/service-account-key.json"
+    GOOGLE_APPLICATION_CREDENTIALS="/path/to/your/service-account-key.json"
+    ```
+
+</details>
+
+
+### - Set Cloud SQL
+
+</details>
+
+1.  **Set the environment variable** inside the `.env` file. Add the following line and replace the placeholder with your information.
+
+* [Cloud SQL Code Reference](https://github.com/qbxlvnf11/google-cloud-sql/tree/main)
+
+<details>
+
+    ```ini
+    # .env
+    CLOUD_SQL_INSTANCE=...
+
+    DB_USER=...
+    DB_PASSWORD=...
+    DB_NAME=...
+
+    DB_DRIVER=...
+    DB_API_DRIVER=...
+
+    DB_PROMPT_TABLE=...
     ```
 
 </details>
