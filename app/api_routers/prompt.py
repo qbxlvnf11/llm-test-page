@@ -23,7 +23,7 @@ def get_role_prompts_metadata(request: Request):
     engine = request.app.state.cloudsql_db.get_engine()  # sync Engine 반환
     with engine.connect() as conn:
         res = conn.execute(text("""
-            SELECT id, name
+            SELECT id, name, description
             FROM public.prompt_role
             ORDER BY id;
         """))

@@ -79,7 +79,7 @@ window.onload = async () => {
         opt.value = rp.id;
         opt.textContent = rp.name;
         opt.dataset.description = rp.description || '';
-        opt.dataset.text = rp.text || '';
+        // opt.dataset.text = rp.text || '';
         roleSelect.appendChild(opt);
       });
     } else {
