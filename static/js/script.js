@@ -8,22 +8,6 @@ marked.setOptions({
 
 function renderMarkdown(rawText) {
   return marked.parse(rawText);
-  // const parts = rawText.split(/(```[\s\S]*?```)/g);
-  // const escaped = parts.map((part) => {
-  //   if (part.startsWith("```") && part.endsWith("```")) {
-  //     return part; // 코드블록 그대로
-  //   } else {
-  //     return part
-  //       .replace(/\\/g, '\\\\')
-  //       .replace(/(?<=^|\n)- /g, '\\- ')
-  //       .replace(/(?<=^|\n)\* /g, '\\* ')
-  //       .replace(/_/g, '\\_')
-  //       .replace(/`/g, '\\`')
-  //       .replace(/\t/g, '&nbsp;&nbsp;&nbsp;&nbsp;')
-  //       .replace(/  /g, '&nbsp;&nbsp;');
-  //   }
-  // });
-  // return marked.parse(escaped.join(''));
 }
 
 const modelSelect = document.getElementById('model-select');
@@ -45,8 +29,15 @@ const outputTokens = document.getElementById('output-tokens');
 const estimatedCost = document.getElementById('estimated-cost');
 const inferenceTime = document.getElementById('inference-time');
 
+// New elements for role prompts
+const roleSelect = document.getElementById('role-select');
+const roleDesc = document.getElementById('role-desc');
+
 window.onload = async () => {
+  console.log('[LLM Test] window.onload start');
+
   try {
+    console.log('[LLM Test] fetching models /gemini_available_models');
     const response = await fetch('/gemini_available_models');
     const models = await response.json();
     models.forEach(model => {
@@ -56,19 +47,77 @@ window.onload = async () => {
       modelSelect.appendChild(opt);
     });
     modelSelect.value = 'models/gemini-2.5-flash';
+    console.log('[LLM Test] models loaded', models);
   } catch (e) {
+    console.error('[LLM Test] models load failed', e);
     modelSelect.innerHTML = '<option>모델 로딩 실패</option>';
+  }
+
+  // New: role prompts 로드 (디버깅 로깅 추가)
+  try {
+    console.log('[LLM Test] fetching role prompts /get_role_prompts_metadata');
+    const r = await fetch('/get_role_prompts_metadata');
+    console.log('[LLM Test] /get_role_prompts_metadata response status', r.status);
+    if (!r.ok) {
+      const txt = await r.text().catch(()=>'<no body>');
+      throw new Error(`role prompts fetch failed: status ${r.status} body: ${txt}`);
+    }
+    const roles = await r.json();
+    console.log('[LLM Test] role prompts json', roles);
+
+    // 항상 첫 옵션으로 "프롬프트 사용 안함"
+    roleSelect.innerHTML = '';
+    const noOpt = document.createElement('option');
+    noOpt.value = '';
+    noOpt.textContent = '(프롬프트 사용 안함)';
+    noOpt.dataset.description = '선택 시 role 프롬프트 없이 사용자 입력만 LLM에 전달됩니다.';
+    roleSelect.appendChild(noOpt);
+
+    if (Array.isArray(roles) && roles.length > 0) {
+      roles.forEach(rp => {
+        const opt = document.createElement('option');
+        opt.value = rp.id;
+        opt.textContent = rp.name;
+        opt.dataset.description = rp.description || '';
+        opt.dataset.text = rp.text || '';
+        roleSelect.appendChild(opt);
+      });
+    } else {
+      const emptyOpt = document.createElement('option');
+      emptyOpt.value = '';
+      emptyOpt.textContent = '(등록된 role 프롬프트가 없습니다)';
+      roleSelect.appendChild(emptyOpt);
+    }
+
+    roleSelect.selectedIndex = 0;
+    roleDesc.textContent = roleSelect.options[0].dataset.description || '';
+    console.log('[LLM Test] roleSelect populated');
+  } catch (e) {
+    console.error('[LLM Test] role prompts load failed', e);
+    roleSelect.innerHTML = '<option value="">(로드 실패)</option>';
+    roleDesc.textContent = 'Role 목록을 불러오지 못했습니다. (콘솔 확인)';
   }
 };
 
 temperatureSlider.addEventListener('input', e => temperatureValue.textContent = e.target.value);
 topPSlider.addEventListener('input', e => topPValue.textContent = e.target.value);
 
+// Update role description when selection changes
+if (roleSelect) {
+  roleSelect.addEventListener('change', (e) => {
+    const opt = e.target.selectedOptions[0];
+    roleDesc.textContent = opt ? (opt.dataset.description || '') : '';
+  });
+}
+
 submitButton.addEventListener('click', async () => {
   const prompt = promptInput.value.trim();
   if (!prompt) return alert('질문을 입력해주세요.');
   setLoading(true);
   resetUsageInfo();
+
+  // include role_id (null when first option '(프롬프트 사용 안함)' selected)
+  const selectedRoleId = roleSelect && roleSelect.value ? Number(roleSelect.value) : null;
 
   const requestBody = {
     query: prompt,
@@ -77,7 +126,8 @@ submitButton.addEventListener('click', async () => {
     top_p: parseFloat(topPSlider.value),
     top_k: parseInt(topKInput.value),
     max_output_tokens: parseInt(maxTokensInput.value),
-    stream: streamCheckbox.checked
+    stream: streamCheckbox.checked,
+    role_id: selectedRoleId
   };
 
   try {

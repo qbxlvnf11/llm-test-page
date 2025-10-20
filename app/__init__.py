@@ -5,7 +5,8 @@ from fastapi.templating import Jinja2Templates
 import os 
 from sqlalchemy import text
 
-from .api_routers import gemini_test
+from .api_routers import llm_test
+from .api_routers import prompt
 from db.utils import make_db_from_env, get_conn
 
 def create_app() -> FastAPI:
@@ -27,7 +28,8 @@ def create_app() -> FastAPI:
 
     app.mount("/static", StaticFiles(directory="static"), name="static")
 
-    app.include_router(gemini_test.router)
+    app.include_router(llm_test.router)
+    app.include_router(prompt.router)
 
     async def _startup() -> None:
         try:

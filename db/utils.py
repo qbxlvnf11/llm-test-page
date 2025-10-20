@@ -65,3 +65,4 @@ def make_db_from_env() -> CloudSQLDatabase:
         db_driver=db_driver,
         ip_type=ip_type,
     )  
+

@@ -1,4 +1,5 @@
 import sqlalchemy
+from sqlalchemy import text
 from sqlalchemy.engine import Engine, Row
 from sqlalchemy.exc import SQLAlchemyError
 from google.cloud.sql.connector import Connector, IPTypes
@@ -135,4 +136,14 @@ class CloudSQLDatabase:
             print(f"컬럼 정보 조회 실패: {e}")
             return []
 
-            
+    def fetch_all(self, sql: str, params: dict = None):
+        # sync 엔진용 편의 메서드
+        with self.engine.connect() as conn:
+            res = conn.execute(text(sql), params or {})
+            return [dict(r) for r in res.fetchall()]
+
+    async def fetch_all_async(self, sql: str, params: dict = None):
+        # async 엔진용 편의 메서드
+        async with self.engine.connect() as conn:
+            res = await conn.execute(text(sql), params or {})
+            return [dict(r) for r in res.fetchall()]

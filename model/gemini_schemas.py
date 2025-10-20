@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 class GeminiTestQueryRequest(BaseModel):
     query: str = Field(..., description="Gemini 모델에게 보낼 질문(프롬프트)")
@@ -8,6 +9,7 @@ class GeminiTestQueryRequest(BaseModel):
     top_k: int = Field(40, description="Top-K 샘플링")
     top_p: float = Field(1.0, description="Top-P 샘플링")
     stream: bool = False
+    role_id: Optional[int] = None
 
 class GeminiTestQueryResponse(BaseModel):
     response_text: str
