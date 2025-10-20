@@ -18,12 +18,11 @@
 ### - Set Cloud SQL
 
 <details>
+<summary>Cloud SQL Setup Procedure</summary>
 
 1.  **Set the environment variable** inside the `.env` file. Add the following line and replace the placeholder with your information.
 
 * [Cloud SQL Code Reference](https://github.com/qbxlvnf11/google-cloud-sql/tree/main)
-
-<details>
 
     ```ini
     # .env
@@ -95,7 +94,7 @@ uvicorn server:app --host 0.0.0.0 --port $SERVER_PORT
 ### - GCP Cloud Run (SDK Shell)
 
 <details>
-<summary>Set Configuration Procedure</summary>
+<summary>GCP Cloud Run Setup Procedure</summary>
 
 1. [Install](https://cloud.google.com/sdk/docs/install?hl=ko)
 
