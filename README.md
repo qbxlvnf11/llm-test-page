@@ -104,7 +104,7 @@ uvicorn server:app --host 0.0.0.0 --port $SERVER_PORT
 gcloud auth login
 gcloud config set project [GCP_PROJECT_ID]
 # Checking Docker Build 
-docker build --build-arg SERVER_PORT={SERVER_PORT} -t api_server_env -f Dockerfile .
+docker build --build-arg SERVER_PORT={SERVER_PORT} -t api_server_env_detached -f Dockerfile.detached .
 ```
 
 3. Push the image to Google Container Registry (GCR) or Artifact Registry
