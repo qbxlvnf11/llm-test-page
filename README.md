@@ -91,6 +91,7 @@ uvicorn server:app --host 0.0.0.0 --port $SERVER_PORT
 
 </details>
 
+
 ### - GCP Cloud Run (SDK Shell)
 
 <details>
@@ -101,9 +102,11 @@ uvicorn server:app --host 0.0.0.0 --port $SERVER_PORT
 2. Preparation
 
 ```
+GCP_PROJECT_ID={GCP_PROJECT_ID}
 gcloud auth login
-gcloud config set project [GCP_PROJECT_ID]
+gcloud config set project $GCP_PROJECT_ID
 # Checking Docker Build 
+docker rmi -f api_server_env_detached
 docker build --build-arg SERVER_PORT={SERVER_PORT} -t api_server_env_detached -f Dockerfile.detached .
 ```
 
@@ -115,15 +118,15 @@ gcloud config set compute/region asia-south3
 # Docker authentication
 gcloud auth configure-docker
 # Image tagging and pushing
-docker tag api_server_env asia.gcr.io/[GCP_PROJECT_ID]/api_server_env:latest
-docker push asia.gcr.io/[GCP_PROJECT_ID]/api_server_env:latest
+docker tag api_server_env_detached asia.gcr.io/$GCP_PROJECT_ID/api_server_env_detached:latest
+docker push asia.gcr.io/$GCP_PROJECT_ID/api_server_env_detached:latest
 ```
 
 4. Deploy to Cloud Run
 
 ```
 gcloud run deploy api-server \
-  --image asia.gcr.io/[GCP_PROJECT_ID]/api_server_env:latest \
+  --image asia.gcr.io/$GCP_PROJECT_ID/api_server_env_detached:latest \
   --platform managed \
   --region asia-south1 \
   --allow-unauthenticated
