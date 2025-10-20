@@ -17,7 +17,7 @@
 
 ### - Set Cloud SQL
 
-</details>
+<details>
 
 1.  **Set the environment variable** inside the `.env` file. Add the following line and replace the placeholder with your information.
 
