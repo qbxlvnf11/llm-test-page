@@ -142,13 +142,13 @@ gcloud beta run services add-iam-policy-binding api-server --region=asia-southea
 
 </details>
 
+---
 
-Author
-=============
+## Author
 
-#### - LinkedIn: https://www.linkedin.com/in/taeyong-kong-016bb2154
+#### - [LinkedIn](https://www.linkedin.com/in/taeyong-kong-016bb2154)
 
-#### - Blog URL: https://blog.naver.com/qbxlvnf11
+#### - [Blog URL](https://blog.naver.com/qbxlvnf11)
 
 #### - Email: qbxlvnf11@google.com, qbxlvnf11@naver.com
 
